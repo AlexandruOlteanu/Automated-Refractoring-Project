@@ -11,6 +11,7 @@ using namespace std;
 
 int all_deleted_lines = 0;
 int all_moved_lines = 0;
+bool local_ignore_for_moving;
 
 ifstream in(instruction_file);
 
@@ -129,6 +130,7 @@ void move_common_lines_to_upper_parents(my_data &current) {
             continue;
         }
         bool always_common = true;
+        bool only_missing_from_local = true;
         for (auto &child : current.childs) {
             bool common_here = false;
             for (auto line : child.lines) {
@@ -139,8 +141,13 @@ void move_common_lines_to_upper_parents(my_data &current) {
             }
             if (!common_here) {
                 always_common = false;
-                break;
+                if (child.name.find("local") == -1) {
+                    only_missing_from_local = false;
+                }
             }
+        }
+        if (local_ignore_for_moving && only_missing_from_local) {
+            always_common = true;
         }
         if (!always_common) {
             lines_to_go_up[i] = false;
@@ -214,9 +221,21 @@ void remove_unnecessary_comments(my_data &current) {
 void  write_refractored_files(my_data &current) {
     ofstream write(write_folder + current.name);
     int i = 0;
+    int empty_lines = 0;
     for (auto line : current.lines) {
         if (!current.deleted_lines[i]) {
-            write << line << '\n';
+            if (line == "") {
+                ++empty_lines;
+            }
+            else {
+                empty_lines = 0;
+            }
+            if (empty_lines <= 1) {
+                write << line << '\n';
+            }
+            else {
+                ++all_deleted_lines;
+            }
         }
         else {
             ++all_deleted_lines;
@@ -231,6 +250,11 @@ void  write_refractored_files(my_data &current) {
 int main() {
 
     my_data root;
+    // True if you want to move changes that differ only on local or false
+    // if you don't
+    local_ignore_for_moving = true;
+    // local_ignore_for_moving = false;
+
     // Run this only if it's the first time making the instructions
     // write_partial_instructions();
     read_data(root);
