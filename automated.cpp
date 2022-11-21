@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#include <vector>
+#include <fstream>
+#include <iostream>
 #include <dirent.h>
 using namespace std;
 
