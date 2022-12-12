@@ -258,12 +258,12 @@ int main() {
     // local_ignore_for_moving = false;
 
     // Run this only if it's the first time making the instructions
-    // write_partial_instructions();
-    read_data(root);
-    remove_common_lines(root);
-    move_common_lines_to_upper_parents(root);
-    remove_unnecessary_comments(root);
-    write_refractored_files(root);
+    write_partial_instructions();
+    // read_data(root);
+    // remove_common_lines(root);
+    // move_common_lines_to_upper_parents(root);
+    // remove_unnecessary_comments(root);
+    // write_refractored_files(root);
 
     cout << "Number of deleted lines after refractoring : " << all_deleted_lines << '\n';
     cout << "Number of moved lines after refractoring : "<< all_moved_lines << '\n';
